@@ -1,0 +1,56 @@
+package app
+
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/go-chi/chi/v5"
+	"github.com/rs/zerolog/log"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/routes"
+	"github.com/uptrace/bun"
+)
+
+// App is the main application struct
+type App struct {
+	router      *chi.Mux
+	huma        *huma.API
+	db          *bun.DB
+	controllers *setup.Controllers
+	config      *setup.DefaultConfig
+}
+
+func newApp(r *chi.Mux, h *huma.API, config *setup.DefaultConfig, c *setup.Controllers) *App {
+	db, err := setup.InitializeDatabase()
+	if err != nil || db == nil {
+		panic(fmt.Sprintf("failed to initialize database: %v", err))
+	}
+
+	return &App{
+		router:      r,
+		huma:        h,
+		db:          db,
+		controllers: c,
+		config:      config,
+	}
+}
+
+// Run starts the application server
+func (a *App) Run() error {
+	// Configure your routes
+	a.registerRoutes()
+
+	// Start the HTTP server
+	log.Info().Msgf("Starting server on %s", a.config.HTTPAddress)
+	return http.ListenAndServe(a.config.HTTPAddress, a.router)
+}
+
+// registerRoutes configures all API endpoints
+func (a *App) registerRoutes() {
+	if a.huma == nil {
+		log.Fatal().Msgf("huma is nil")
+	}
+
+	routes.RegisterRoutes(a.huma, a.controllers)
+}
