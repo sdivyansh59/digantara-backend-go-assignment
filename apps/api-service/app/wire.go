@@ -6,6 +6,7 @@ package app
 import (
 	"github.com/google/wire"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/greeting"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
 )
 
@@ -14,7 +15,7 @@ func InitializeApp() (*App, error) {
 	wire.Build(
 		setup.ProvideSingletonChiRouter,
 		setup.ProvideSingletonHuma,
-		setup.ProvideDefaultConfig,
+		utils.ProvideDefaultConfig,
 		setup.ProvideControllers,
 		newApp,
 

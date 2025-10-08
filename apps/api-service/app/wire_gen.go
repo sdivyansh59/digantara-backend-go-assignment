@@ -8,6 +8,7 @@ package app
 
 import (
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/greeting"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
 )
 
@@ -17,7 +18,7 @@ import (
 func InitializeApp() (*App, error) {
 	mux := setup.ProvideSingletonChiRouter()
 	api := setup.ProvideSingletonHuma(mux)
-	defaultConfig := setup.ProvideDefaultConfig()
+	defaultConfig := utils.ProvideDefaultConfig()
 	controller := greeting.NewController()
 	controllers := setup.ProvideControllers(controller)
 	app := newApp(mux, api, defaultConfig, controllers)

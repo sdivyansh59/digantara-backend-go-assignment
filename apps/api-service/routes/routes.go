@@ -7,7 +7,7 @@ import (
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
 )
 
-// RegisterRoutes registers all greeting-related routes to the API
+// RegisterRoutes registers all job routes to the API
 func RegisterRoutes(api *huma.API, c *setup.Controllers) {
 	huma.Register(*api, huma.Operation{
 		OperationID: "get-greeting",

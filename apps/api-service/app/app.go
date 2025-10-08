@@ -7,6 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog/log"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/routes"
 	"github.com/uptrace/bun"
@@ -18,10 +19,10 @@ type App struct {
 	huma        *huma.API
 	db          *bun.DB
 	controllers *setup.Controllers
-	config      *setup.DefaultConfig
+	config      *utils.DefaultConfig
 }
 
-func newApp(r *chi.Mux, h *huma.API, config *setup.DefaultConfig, c *setup.Controllers) *App {
+func newApp(r *chi.Mux, h *huma.API, config *utils.DefaultConfig, c *setup.Controllers) *App {
 	db, err := setup.InitializeDatabase()
 	if err != nil || db == nil {
 		panic(fmt.Sprintf("failed to initialize database: %v", err))
