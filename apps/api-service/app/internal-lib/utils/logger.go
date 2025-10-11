@@ -1,13 +1,67 @@
 package utils
 
 import (
+	"io"
 	"os"
-	"time"
 
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
+// InitGlobalLogger initializes the global zerolog logger and returns it
+// This should be called once at application startup via Wire
+func InitGlobalLogger(config *DefaultConfig) (*zerolog.Logger, error) {
+	env := GetEnvOr("ENVIRONMENT", "production")
+	isProd := env == "production"
+
+	// Configure log level
+	logLevel := zerolog.InfoLevel
+	if config.IsDebug || os.Getenv("DEBUG") == "true" {
+		logLevel = zerolog.DebugLevel
+	}
+	zerolog.SetGlobalLevel(logLevel)
+
+	// Get hostname, with fallback
+	hostname, err := os.Hostname()
+	if err != nil {
+		hostname = "unknown"
+		// Log the error but don't fail initialization
+	}
+
+	// Configure output writer
+	var output io.Writer = os.Stdout
+	if isProd {
+		// JSON format for production (better for log aggregators)
+		output = os.Stdout
+	} else {
+		// Pretty console output for development
+		output = zerolog.ConsoleWriter{
+			Out:        os.Stdout,
+			TimeFormat: "2006/01/02 15:04:05",
+		}
+	}
+
+	// Set up the global logger
+	logger := zerolog.New(output).
+		With().
+		Timestamp().
+		Str("host", hostname).
+		Str("env", env).
+		Logger()
+
+	// Set it as the global logger
+	log.Logger = logger
+
+	log.Info().
+		Str("level", logLevel.String()).
+		Str("mode", env).
+		Msg("Global logger initialized successfully")
+
+	return &logger, nil
+}
+
 // WithLogger can be used to compose a struct with a logger.
+// It wraps a logger instance for dependency injection.
 //
 // Example:
 //
@@ -18,38 +72,17 @@ type WithLogger struct {
 	Logger *zerolog.Logger
 }
 
+// NewWithLogger creates a WithLogger wrapper around the provided logger
 func NewWithLogger(logger *zerolog.Logger) *WithLogger {
 	return &WithLogger{Logger: logger}
 }
 
+// NewTestWithLogger creates a test logger with debug mode enabled
 func NewTestWithLogger() *WithLogger {
-	logger := NewLogger(&DefaultConfig{IsDebug: true})
-	return &WithLogger{Logger: logger}
-}
-
-// ProvideLogger returns a new logger instance for dependency injection
-func ProvideLogger(config *DefaultConfig) *zerolog.Logger {
-	return NewLogger(config)
-}
-
-// NewLogger returns a standard zerolog logger.
-func NewLogger(config *DefaultConfig) *zerolog.Logger {
-	var logger zerolog.Logger
-
-	// Configure zerolog based on environment
-	if config.IsDebug {
-		// Development mode: pretty console output with colors and readable format
-		output := zerolog.ConsoleWriter{
-			Out:        os.Stdout,
-			TimeFormat: time.RFC3339,
-		}
-		logger = zerolog.New(output).With().Timestamp().Caller().Logger()
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	} else {
-		// Production mode: JSON output for structured logging
-		logger = zerolog.New(os.Stdout).With().Timestamp().Caller().Logger()
-		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	output := zerolog.ConsoleWriter{
+		Out:        os.Stdout,
+		TimeFormat: "15:04:05",
 	}
-
-	return &logger
+	logger := zerolog.New(output).With().Timestamp().Caller().Logger()
+	return &WithLogger{Logger: &logger}
 }

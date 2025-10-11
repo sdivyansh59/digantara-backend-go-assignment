@@ -9,7 +9,9 @@ package app
 import (
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/greeting"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/job"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup/dbconfig"
 )
 
 // Injectors from wire.go:
@@ -20,7 +22,22 @@ func InitializeApp() (*App, error) {
 	api := setup.ProvideSingletonHuma(mux)
 	defaultConfig := utils.ProvideDefaultConfig()
 	controller := greeting.NewController()
-	controllers := setup.ProvideControllers(controller)
-	app := newApp(mux, api, defaultConfig, controllers)
+	generator, err := setup.ProvideSnowflakeGenerator()
+	if err != nil {
+		return nil, err
+	}
+	logger, err := utils.InitGlobalLogger(defaultConfig)
+	if err != nil {
+		return nil, err
+	}
+	withLogger := utils.NewWithLogger(logger)
+	jobSchedulerDB, err := dbconfig.ProvideJobSchedulerDB(logger, withLogger, defaultConfig)
+	if err != nil {
+		return nil, err
+	}
+	iRepository := job.NewRepository(generator, jobSchedulerDB)
+	jobController := job.NewController(iRepository)
+	controllers := setup.ProvideControllers(controller, jobController)
+	app := newApp(mux, api, defaultConfig, controllers, withLogger, jobSchedulerDB)
 	return app, nil
 }

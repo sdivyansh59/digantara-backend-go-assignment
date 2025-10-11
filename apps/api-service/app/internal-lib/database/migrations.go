@@ -3,10 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
-	"io/fs"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/rs/zerolog"
 	"github.com/uptrace/bun"
@@ -17,8 +14,11 @@ import (
 func RunMigrationsFromPath(ctx context.Context, db *bun.DB, path string, logger *zerolog.Logger) error {
 	migrations := migrate.NewMigrations()
 
-	// Discover migrations from the specified directory
-	if err := discoverMigrationsFromDir(migrations, path); err != nil {
+	// Use os.DirFS to create a filesystem for the migrations directory
+	fsys := os.DirFS(path)
+
+	// Discover migrations automatically using bun's built-in method
+	if err := migrations.Discover(fsys); err != nil {
 		logger.Error().Err(err).Msgf("Failed to discover migrations from path: %s", path)
 		return fmt.Errorf("failed to discover migrations from path %s: %w", path, err)
 	}
@@ -48,50 +48,4 @@ func RunMigrations(ctx context.Context, db *bun.DB, migrations *migrate.Migratio
 	}
 
 	return nil
-}
-
-func discoverMigrationsFromDir(migrations *migrate.Migrations, dirPath string) error {
-	fsys := os.DirFS(dirPath)
-
-	return fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if d.IsDir() {
-			return nil
-		}
-
-		// Only process .sql files
-		if !strings.HasSuffix(path, ".sql") {
-			return nil
-		}
-
-		fullPath := filepath.Join(dirPath, path)
-		content, err := os.ReadFile(fullPath)
-		if err != nil {
-			return fmt.Errorf("failed to read migration file %s: %w", fullPath, err)
-		}
-
-		// Determine migration type from filename
-		var migrationFunc migrate.MigrationFunc
-		if strings.Contains(path, ".up.sql") {
-			migrationFunc = func(ctx context.Context, db *bun.DB) error {
-				_, err := db.ExecContext(ctx, string(content))
-				return err
-			}
-		} else if strings.Contains(path, ".down.sql") {
-			// Skip down migrations for now, or handle separately
-			return nil
-		} else {
-			return nil
-		}
-
-		migrations.Add(migrate.Migration{
-			Name: strings.TrimSuffix(filepath.Base(path), ".up.sql"),
-			Up:   migrationFunc,
-		})
-
-		return nil
-	})
 }

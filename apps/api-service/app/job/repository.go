@@ -6,6 +6,7 @@ import (
 
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/database/crud"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/snowflake"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup/dbconfig"
 	"github.com/uptrace/bun"
 )
 
@@ -20,7 +21,7 @@ type IRepository interface {
 	Create(ctx context.Context, job *Job) error
 	Update(ctx context.Context, job *Job) error
 	GetByID(ctx context.Context, id snowflake.ID) (*Job, error)
-	DeleteByID(ctx context.Context, id snowflake.ID) error
+	DeleteByID(ctx context.Context, job *Job) error
 }
 
 type Repository struct {
@@ -29,10 +30,10 @@ type Repository struct {
 	handler            *crud.Handler[Job, snowflake.ID]
 }
 
-func NewRepository(snowflakeGenerator *snowflake.Generator) IRepository {
+func NewRepository(snowflakeGenerator *snowflake.Generator, jobSchedulerDB *dbconfig.JobSchedulerDB) IRepository {
 	return &Repository{
 		snowflakeGenerator: snowflakeGenerator,
-		handler:            crud.NewHandler[Job, snowflake.ID](deps.DB.DB),
+		handler:            crud.NewHandler[Job, snowflake.ID](jobSchedulerDB.DB),
 	}
 }
 
@@ -53,6 +54,6 @@ func (r *Repository) GetByID(ctx context.Context, id snowflake.ID) (*Job, error)
 	return r.handler.GetByID(ctx, id)
 }
 
-func (r *Repository) DeleteByID(ctx context.Context, e *Job) error {
-	return r.handler.Delete(ctx, e)
+func (r *Repository) DeleteByID(ctx context.Context, job *Job) error {
+	return r.handler.Delete(ctx, job)
 }

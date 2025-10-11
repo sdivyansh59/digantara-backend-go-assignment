@@ -16,10 +16,9 @@ type JobSchedulerDB struct {
 }
 
 func ProvideJobSchedulerDB(logger *zerolog.Logger, withLogger *utils.WithLogger, config *utils.DefaultConfig) (*JobSchedulerDB, error) {
-	jobSchedulerDBConfig := *config
-	jobSchedulerDBConfig.ServicePrefix = "JOB_SCHEDULER"
-
-	db := database.NewPostgres(&jobSchedulerDBConfig, logger)
+	// Use the config as-is without changing ServicePrefix
+	// This allows POSTGRES_DB_URL to be found correctly
+	db := database.NewPostgres(config, logger)
 
 	if utils.IsDebug() {
 		db.AddQueryHook(database.NewDBLogger(withLogger))
@@ -36,10 +35,18 @@ func ProvideJobSchedulerDB(logger *zerolog.Logger, withLogger *utils.WithLogger,
 
 	logger.Info().Msg("Job Scheduler Database health check passed")
 
-	return &JobSchedulerDB{DB: db}, nil
+	jobSchedulerDB := &JobSchedulerDB{DB: db}
+
+	// Run migrations automatically as part of initialization
+	if err := runMigrations(jobSchedulerDB, logger); err != nil {
+		return nil, fmt.Errorf("failed to initialize database with migrations: %w", err)
+	}
+
+	return jobSchedulerDB, nil
 }
 
-func AddJobSchedulerDBMigrationsHook(db *JobSchedulerDB, logger *zerolog.Logger) error {
+// runMigrations is an internal helper to run migrations
+func runMigrations(db *JobSchedulerDB, logger *zerolog.Logger) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
@@ -56,4 +63,10 @@ func AddJobSchedulerDBMigrationsHook(db *JobSchedulerDB, logger *zerolog.Logger)
 
 	logger.Info().Msg("Migrations completed successfully")
 	return nil
+}
+
+// AddJobSchedulerDBMigrationsHook is kept for backward compatibility or manual migration runs
+// In normal operation, migrations are run automatically by ProvideJobSchedulerDB
+func AddJobSchedulerDBMigrationsHook(db *JobSchedulerDB, logger *zerolog.Logger) error {
+	return runMigrations(db, logger)
 }

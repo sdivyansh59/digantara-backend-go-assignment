@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -150,4 +151,20 @@ func SplitSimpleConfig(input string) map[string]string {
 	}
 
 	return config
+}
+
+// GetEnvOrInt64 returns the given env variable as int64 or a default.
+func GetEnvOrInt64(key string, otherwise int64) int64 {
+	env := os.Getenv(key)
+
+	if env == "" {
+		return otherwise
+	}
+
+	val, err := strconv.ParseInt(env, 10, 64)
+	if err != nil {
+		return otherwise
+	}
+
+	return val
 }

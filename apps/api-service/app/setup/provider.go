@@ -7,7 +7,10 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/go-chi/chi/v5"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/greeting"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/snowflake"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/job"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/scheduler"
 )
 
 var (
@@ -26,7 +29,9 @@ func ProvideSingletonHuma(router *chi.Mux) *huma.API {
 
 // Controllers holds all application controllers
 type Controllers struct {
-	Greeting *greeting.Controller
+	Greeting  *greeting.Controller
+	Job       *job.Controller
+	Scheduler *scheduler.Controller
 	// Add other controllers here as you build them
 	// User     *user.Controller
 	// Product  *product.Controller
@@ -35,10 +40,18 @@ type Controllers struct {
 // ProvideControllers wires up all controllers
 func ProvideControllers(
 	greetingController *greeting.Controller,
+	jobController *job.Controller,
 	// Add other controllers here as parameters
 ) *Controllers {
 	return &Controllers{
 		Greeting: greetingController,
+		Job:      jobController,
 		// Add other controllers
 	}
+}
+
+// ProvideSnowflakeGenerator provides a snowflake ID generator
+func ProvideSnowflakeGenerator() (*snowflake.Generator, error) {
+	machineID := utils.GetEnvOrInt64("MACHINE_ID", 1)
+	return snowflake.NewGenerator(machineID)
 }

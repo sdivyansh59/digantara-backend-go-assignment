@@ -1,5 +1,12 @@
 package scheduler
 
+type Controller struct {
+}
+
+func NewController() *Controller {
+	return &Controller{}
+}
+
 //UPDATE jobs
 //SET status = 'running'
 //WHERE id = (
