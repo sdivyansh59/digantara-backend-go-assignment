@@ -6,6 +6,7 @@ package app
 import (
 	"github.com/google/wire"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/greeting"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/snowflake"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
 )
@@ -17,6 +18,7 @@ func InitializeApp() (*App, error) {
 		setup.ProvideSingletonHuma,
 		utils.ProvideDefaultConfig,
 		setup.ProvideControllers,
+		snowflake.NewGenerator(utils.GetEnvOr("MACHINE_ID", 1)),
 		newApp,
 
 		// initialize all domains controller and repository
