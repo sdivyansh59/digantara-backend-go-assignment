@@ -30,7 +30,10 @@ func InitializeApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	withLogger := utils.NewWithLogger(logger)
+	withLogger, err := utils.NewWithLogger(logger)
+	if err != nil {
+		return nil, err
+	}
 	jobSchedulerDB, err := dbconfig.ProvideJobSchedulerDB(logger, withLogger, defaultConfig)
 	if err != nil {
 		return nil, err

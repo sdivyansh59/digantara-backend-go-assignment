@@ -6,6 +6,7 @@ import (
 
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup/dbconfig"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/database/crud"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/database/query"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/snowflake"
 	"github.com/uptrace/bun"
 )
@@ -18,6 +19,7 @@ type JobFilter struct {
 }
 
 type IRepository interface {
+	Filter(ctx context.Context, option ...query.SearchOption) ([]Job, error)
 	Create(ctx context.Context, job *Job) error
 	Update(ctx context.Context, job *Job) error
 	GetByID(ctx context.Context, id snowflake.ID) (*Job, error)
@@ -35,6 +37,10 @@ func NewRepository(snowflakeGenerator *snowflake.Generator, jobSchedulerDB *dbco
 		snowflakeGenerator: snowflakeGenerator,
 		handler:            crud.NewHandler[Job, snowflake.ID](jobSchedulerDB.DB),
 	}
+}
+
+func (r *Repository) Filter(ctx context.Context, option ...query.SearchOption) ([]Job, error) {
+	return r.handler.Search(ctx, option...)
 }
 
 func (r *Repository) Create(ctx context.Context, job *Job) error {

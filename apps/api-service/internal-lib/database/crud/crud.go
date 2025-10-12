@@ -20,6 +20,23 @@ func NewHandler[E any, ID any](db DB) *Handler[E, ID] {
 	return &Handler[E, ID]{db: db}
 }
 
+// Search returns a list of entities.
+// Use options to add additional conditions to the query.
+func (h Handler[E, ID]) Search(ctx context.Context, options ...query.SearchOption) ([]E, error) {
+	var result []E
+	q := database.GetIDBFromContext(ctx, h.db).
+		NewSelect().
+		Model(&result)
+
+	for _, option := range options {
+		q = option(q)
+	}
+
+	err := q.Scan(ctx)
+
+	return result, database.WrapError(err)
+}
+
 // GetByID returns a single entity by ID.
 // Use options to add additional conditions to the query.
 func (h Handler[E, ID]) GetByID(ctx context.Context, id ID, options ...query.SearchOption) (*E, error) {

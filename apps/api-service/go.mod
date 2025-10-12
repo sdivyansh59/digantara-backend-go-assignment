@@ -6,7 +6,6 @@ toolchain go1.24.7
 
 require (
 	github.com/danielgtaylor/huma/v2 v2.34.1
-	github.com/getsentry/sentry-go v0.35.3
 	github.com/go-bun/bun-starter-kit v0.0.0-20221117143002-e3e263102887
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/google/uuid v1.6.0
@@ -18,7 +17,6 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/uptrace/bun v1.2.15
 	github.com/uptrace/bun/dialect/pgdialect v1.2.15
-	github.com/uptrace/bun/driver/pgdriver v1.2.15
 	github.com/urfave/cli/v2 v2.27.7
 	go.elastic.co/apm/module/apmsql v1.15.0
 )
@@ -49,6 +47,7 @@ require (
 	github.com/prometheus/procfs v0.0.0-20190425082905-87a4384529e0 // indirect
 	github.com/puzpuzpuz/xsync/v3 v3.5.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
+	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/santhosh-tekuri/jsonschema v1.2.4 // indirect
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
@@ -73,10 +72,10 @@ require (
 	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
 	golang.org/x/tools v0.36.0 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	howett.net/plist v0.0.0-20181124034731-591f970eefbb // indirect
 	lukechampine.com/uint128 v1.1.1 // indirect
-	mellium.im/sasl v0.3.2 // indirect
 	modernc.org/cc/v3 v3.35.19 // indirect
 	modernc.org/ccgo/v3 v3.12.95 // indirect
 	modernc.org/libc v1.11.104 // indirect

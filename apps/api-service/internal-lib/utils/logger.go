@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -73,8 +74,11 @@ type WithLogger struct {
 }
 
 // NewWithLogger creates a WithLogger wrapper around the provided logger
-func NewWithLogger(logger *zerolog.Logger) *WithLogger {
-	return &WithLogger{Logger: logger}
+func NewWithLogger(logger *zerolog.Logger) (*WithLogger, error) {
+	if logger == nil {
+		return nil, fmt.Errorf("logger cannot be nil, probably global loggrer not initialized yet")
+	}
+	return &WithLogger{Logger: logger}, nil
 }
 
 // NewTestWithLogger creates a test logger with debug mode enabled
