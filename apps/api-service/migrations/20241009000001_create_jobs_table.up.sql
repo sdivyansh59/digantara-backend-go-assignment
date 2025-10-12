@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     interval BOOLEAN DEFAULT false NOT NULL,
     scheduled_at BIGINT NOT NULL,
     last_run_at TIMESTAMP,
+    attributes JSONB DEFAULT '{}'::jsonb,
     created_by VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

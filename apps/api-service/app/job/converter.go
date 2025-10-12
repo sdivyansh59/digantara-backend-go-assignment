@@ -19,8 +19,10 @@ func (c *Converter) ToDTO(entity *Job) *JobResponse {
 		Name:        entity.name,
 		Description: entity.description,
 		Status:      entity.status,
+		Interval:    entity.interval,
 		ScheduledAt: entity.scheduledAt,
 		LastRunAt:   entity.lastRunAt,
+		Attributes:  entity.attributes,
 		CreatedBy:   entity.createdBy,
 		CreatedAt:   entity.createdAt,
 		UpdatedAt:   entity.updatedAt,
@@ -36,7 +38,9 @@ func (c *Converter) ToEntity(dto *CreateJobInput) *Job {
 		name:        dto.Name,
 		description: dto.Description,
 		status:      shared.JobStatusPending, // default status
+		interval:    dto.Interval,
 		scheduledAt: dto.ScheduledAt,
+		attributes:  dto.Attributes,
 		createdBy:   dto.CreatedBy,
 	}
 }
