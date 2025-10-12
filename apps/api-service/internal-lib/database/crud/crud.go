@@ -3,8 +3,8 @@ package crud
 import (
 	"context"
 
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/database"
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/database/query"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/database"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/database/query"
 	"github.com/uptrace/bun"
 )
 

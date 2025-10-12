@@ -3,7 +3,7 @@ package setup
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	appMiddleware "github.com/sdivyansh59/digantara-backend-golang-assignment/app/middleware"
+	appMiddleware "github.com/sdivyansh59/digantara-backend-golang-assignment/middleware"
 	"sync"
 	"time"
 )

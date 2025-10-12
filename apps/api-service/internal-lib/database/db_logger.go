@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/utils"
 	"github.com/uptrace/bun"
 )
 

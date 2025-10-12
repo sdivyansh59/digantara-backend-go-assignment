@@ -7,10 +7,10 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/go-chi/chi/v5"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/greeting"
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/snowflake"
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/job"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/scheduler"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/snowflake"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/utils"
 )
 
 var (

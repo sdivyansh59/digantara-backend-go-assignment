@@ -3,7 +3,7 @@ package job
 import (
 	"time"
 
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/snowflake"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/snowflake"
 )
 
 type Job struct {

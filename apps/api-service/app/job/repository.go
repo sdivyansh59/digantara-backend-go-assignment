@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/database/crud"
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/snowflake"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup/dbconfig"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/database/crud"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/snowflake"
 	"github.com/uptrace/bun"
 )
 

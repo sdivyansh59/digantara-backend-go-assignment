@@ -6,9 +6,9 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog/log"
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup/dbconfig"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/utils"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/routes"
 	"github.com/uptrace/bun"
 )

@@ -6,10 +6,10 @@ package app
 import (
 	"github.com/google/wire"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/greeting"
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/job"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup/dbconfig"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/utils"
 )
 
 // InitializeApp wires up all dependencies and returns the application/service instance

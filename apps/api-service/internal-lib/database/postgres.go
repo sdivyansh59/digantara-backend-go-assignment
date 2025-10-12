@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/stdlib"
 	"github.com/rs/zerolog"
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/internal-lib/utils"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/utils"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"go.elastic.co/apm/module/apmsql"
