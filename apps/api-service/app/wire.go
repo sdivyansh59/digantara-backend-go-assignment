@@ -5,8 +5,8 @@ package app
 
 import (
 	"github.com/google/wire"
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/greeting"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/job"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/scheduler"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup/dbconfig"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/utils"
@@ -34,10 +34,13 @@ func InitializeApp() (*App, error) {
 		// Application
 		newApp,
 
-		// Domain controllers and repositories
-		greeting.NewController,
-		job.NewRepository,
+		// Initialize application controllers, converter and repositories
+		// job
 		job.NewController,
+		job.NewConverter,
+		job.NewRepository,
+		// scheduler
+		scheduler.NewController,
 	)
 	return nil, nil
 }

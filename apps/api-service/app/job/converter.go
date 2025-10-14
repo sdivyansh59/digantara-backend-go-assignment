@@ -9,12 +9,12 @@ func NewConverter() *Converter {
 	return &Converter{}
 }
 
-func (c *Converter) ToDTO(entity *Job) *JobResponse {
+func (c *Converter) ToDTO(entity *Job) *JobDTO {
 	if entity == nil {
 		return nil
 	}
 
-	return &JobResponse{
+	return &JobDTO{
 		ID:          entity.id.String(),
 		Name:        entity.name,
 		Description: entity.description,

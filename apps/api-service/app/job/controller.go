@@ -36,17 +36,17 @@ func (c *Controller) FilterJobs(ctx context.Context, input *FilterJobsInput) (*F
 		return nil, fmt.Errorf("failed to filter jobs: %w", err)
 	}
 
-	var jobs []JobResponse
+	jobs := make([]JobDTO, 0, len(entities))
 	for _, entity := range entities {
 		jobs = append(jobs, *c.converter.ToDTO(&entity))
 	}
 
-	return &FilterJobsResponse{
-		Jobs: jobs,
-	}, nil
+	resp := &FilterJobsResponse{}
+	resp.Body.Jobs = jobs
+	return resp, nil
 }
 
-func (c *Controller) GetJobByID(ctx context.Context, input *GetJobByIDInput) (*JobResponse, error) {
+func (c *Controller) GetJobByID(ctx context.Context, input *GetJobByIDInput) (*GetJobByIDResponse, error) {
 	if !c.isAuthorized(ctx) {
 		return nil, fmt.Errorf("unauthorized: you do not have permission to delete this job")
 	}
@@ -66,10 +66,12 @@ func (c *Controller) GetJobByID(ctx context.Context, input *GetJobByIDInput) (*J
 		return nil, fmt.Errorf("job not found")
 	}
 
-	return c.converter.ToDTO(job), nil
+	return &GetJobByIDResponse{
+		Body: *c.converter.ToDTO(job),
+	}, nil
 }
 
-func (c *Controller) CreateJob(ctx context.Context, input *CreateJobInput) (*JobResponse, error) {
+func (c *Controller) CreateJob(ctx context.Context, input *CreateJobInput) (*CreateJobResponse, error) {
 	if !c.isAuthorized(ctx) {
 		return nil, fmt.Errorf("unauthorized: you do not have permission to create a job")
 	}
@@ -86,10 +88,12 @@ func (c *Controller) CreateJob(ctx context.Context, input *CreateJobInput) (*Job
 		return nil, fmt.Errorf("failed to create job: %w", err)
 	}
 
-	return c.converter.ToDTO(entity), nil
+	return &CreateJobResponse{
+		Body: *c.converter.ToDTO(entity),
+	}, nil
 }
 
-func (c *Controller) DeleteJobByID(ctx context.Context, input *DeleteJobByIDInput) (*DeleteJobByIDResponse, error) {
+func (c *Controller) DeleteJobByID(ctx context.Context, input *DeleteJobByIDInput) (*DeleteJobResponse, error) {
 	if !c.isAuthorized(ctx) {
 		return nil, fmt.Errorf("unauthorized: you do not have permission to delete this job")
 	}
@@ -115,8 +119,7 @@ func (c *Controller) DeleteJobByID(ctx context.Context, input *DeleteJobByIDInpu
 		return nil, fmt.Errorf("failed to delete job: %w", err)
 	}
 
-	// Return success response
-	return &DeleteJobByIDResponse{
-		Success: true,
-	}, nil
+	resp := &DeleteJobResponse{}
+	resp.Body.Success = true
+	return resp, nil
 }

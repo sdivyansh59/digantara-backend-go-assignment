@@ -4,7 +4,7 @@ package shared
 type JobStatus string
 
 const (
-	JobStatusPending   JobStatus = "PENDING"
+	JobStatusScheduled JobStatus = "SCHEDULED"
 	JobStatusRunning   JobStatus = "RUNNING"
 	JobStatusCompleted JobStatus = "COMPLETED"
 	JobStatusFailed    JobStatus = "FAILED"

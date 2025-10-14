@@ -7,8 +7,8 @@
 package app
 
 import (
-	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/greeting"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/job"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/scheduler"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/setup/dbconfig"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/utils"
@@ -21,11 +21,6 @@ func InitializeApp() (*App, error) {
 	mux := setup.ProvideSingletonChiRouter()
 	api := setup.ProvideSingletonHuma(mux)
 	defaultConfig := utils.ProvideDefaultConfig()
-	controller := greeting.NewController()
-	generator, err := setup.ProvideSnowflakeGenerator()
-	if err != nil {
-		return nil, err
-	}
 	logger, err := utils.InitGlobalLogger(defaultConfig)
 	if err != nil {
 		return nil, err
@@ -34,13 +29,19 @@ func InitializeApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+	generator, err := setup.ProvideSnowflakeGenerator()
+	if err != nil {
+		return nil, err
+	}
+	converter := job.NewConverter()
 	jobSchedulerDB, err := dbconfig.ProvideJobSchedulerDB(logger, withLogger, defaultConfig)
 	if err != nil {
 		return nil, err
 	}
 	iRepository := job.NewRepository(generator, jobSchedulerDB)
-	jobController := job.NewController(iRepository)
-	controllers := setup.ProvideControllers(controller, jobController)
+	controller := job.NewController(withLogger, generator, converter, iRepository)
+	schedulerController := scheduler.NewController(withLogger, generator, iRepository, converter)
+	controllers := setup.ProvideControllers(controller, schedulerController)
 	app := newApp(mux, api, defaultConfig, controllers, withLogger, jobSchedulerDB)
 	return app, nil
 }
