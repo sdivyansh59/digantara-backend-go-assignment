@@ -18,16 +18,18 @@ type Controller struct {
 	jobRepository job.IRepository
 	jobConverter  *job.Converter
 	sleepTime     time.Duration
+	wakeupChan    chan *shared.WakeupEvent // Read-only channel
 }
 
 func NewController(logger *utils.WithLogger, snowflake *snowflake.Generator, repo job.IRepository,
-	converter *job.Converter) *Controller {
+	converter *job.Converter, wakeupChan chan *shared.WakeupEvent) *Controller {
 	return &Controller{
 		WithLogger:    logger,
 		snowflake:     snowflake,
 		jobRepository: repo,
 		jobConverter:  converter,
 		sleepTime:     1 * time.Minute, // default
+		wakeupChan:    wakeupChan,
 	}
 }
 
@@ -92,13 +94,23 @@ func (c *Controller) runJob(ctx context.Context, job *job.Job) {
 
 // Scheduler responsible for running scheduled jobs at their scheduled time.
 func (c *Controller) Scheduler(ctx context.Context) error {
-
 	go func() {
 		for {
 			c.findAndUpdateSleepTime(ctx)
 			c.Logger.Info().Msgf("Scheduler sleeping for %v", c.sleepTime)
 
-			time.Sleep(c.sleepTime)
+			timer := time.NewTimer(c.sleepTime)
+
+			select {
+			case <-timer.C:
+				// Normal wakeup after sleep
+			case event := <-c.wakeupChan:
+				// Early wakeup triggered by new job
+				c.Logger.Info().Msgf("Scheduler woken up by job %s scheduled at %d", event.JobID, event.ScheduledAt)
+				timer.Stop()
+
+				continue // re-evaluate sleep time immediately
+			}
 
 			jobToRun, err := c.jobRepository.GetNextJobToRun(ctx)
 			if err != nil {

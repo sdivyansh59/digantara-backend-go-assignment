@@ -39,8 +39,9 @@ func InitializeApp() (*App, error) {
 		return nil, err
 	}
 	iRepository := job.NewRepository(generator, jobSchedulerDB)
-	controller := job.NewController(withLogger, generator, converter, iRepository)
-	schedulerController := scheduler.NewController(withLogger, generator, iRepository, converter)
+	v := setup.ProvideWakeupChannel()
+	controller := job.NewController(withLogger, generator, converter, iRepository, v)
+	schedulerController := scheduler.NewController(withLogger, generator, iRepository, converter, v)
 	controllers := setup.ProvideControllers(controller, schedulerController)
 	app := newApp(mux, api, defaultConfig, controllers, withLogger, jobSchedulerDB)
 	return app, nil

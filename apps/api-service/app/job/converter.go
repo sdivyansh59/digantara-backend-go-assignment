@@ -15,17 +15,16 @@ func (c *Converter) ToDTO(entity *Job) *JobDTO {
 	}
 
 	return &JobDTO{
-		ID:          entity.id.String(),
-		Name:        entity.name,
-		Description: entity.description,
-		Status:      entity.status,
-		Interval:    entity.interval,
-		ScheduledAt: entity.scheduledAt,
-		LastRunAt:   entity.lastRunAt,
-		Attributes:  entity.attributes,
-		CreatedBy:   entity.createdBy,
-		CreatedAt:   entity.createdAt,
-		UpdatedAt:   entity.updatedAt,
+		ID:          entity.Id.String(),
+		Name:        entity.Name,
+		Description: entity.Description,
+		Status:      entity.Status,
+		ScheduledAt: entity.ScheduledAt,
+		LastRunAt:   entity.LastRunAt,
+		Attributes:  entity.Attributes,
+		CreatedBy:   entity.CreatedBy,
+		CreatedAt:   entity.CreatedAt,
+		UpdatedAt:   entity.UpdatedAt,
 	}
 }
 
@@ -35,12 +34,11 @@ func (c *Converter) ToEntity(dto *CreateJobInput) *Job {
 	}
 
 	return &Job{
-		name:        dto.Name,
-		description: dto.Description,
-		status:      shared.JobStatusPending, // default status
-		interval:    dto.Interval,
-		scheduledAt: dto.ScheduledAt,
-		attributes:  dto.Attributes,
-		createdBy:   dto.CreatedBy,
+		Name:        dto.Name,
+		Description: dto.Description,
+		Status:      shared.JobStatusScheduled, // default status
+		ScheduledAt: dto.ScheduledAt,
+		Attributes:  dto.Attributes,
+		CreatedBy:   dto.CreatedBy,
 	}
 }

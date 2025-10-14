@@ -29,6 +29,7 @@ func InitializeApp() (*App, error) {
 		setup.ProvideSingletonChiRouter,
 		setup.ProvideSingletonHuma,
 		setup.ProvideSnowflakeGenerator,
+		setup.ProvideWakeupChannel,
 		setup.ProvideControllers,
 
 		// Application

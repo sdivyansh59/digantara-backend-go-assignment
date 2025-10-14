@@ -5,21 +5,24 @@ import (
 
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/shared"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/snowflake"
+	"github.com/uptrace/bun"
 )
 
 type Job struct {
-	Id             snowflake.ID
-	Name           string
-	Description    *string
-	Status         shared.JobStatus
-	IntervalTime   *int64 // save it in mins
-	ScheduledAt    int64  // Unix timestamp, 8 bytes, efficient for sorting and db indexing
-	LastRunAt      *time.Time
-	SuccessfulRuns int
-	Attributes     map[string]interface{} // Custom job attributes (stored as JSONB in DB)
-	CreatedBy      string
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	bun.BaseModel `bun:"table:job,alias:job"`
+
+	Id             snowflake.ID           `bun:"id,pk,notnull"`
+	Name           string                 `bun:"name,notnull"`
+	Description    *string                `bun:"description"`
+	Status         shared.JobStatus       `bun:"status,notnull"`
+	IntervalTime   *int64                 `bun:"interval_time"`        // nullable for one-time jobs
+	ScheduledAt    int64                  `bun:"scheduled_at,notnull"` // Unix timestamp in milliseconds
+	LastRunAt      *time.Time             `bun:"last_run_at"`
+	SuccessfulRuns int                    `bun:"successful_runs,notnull,default:0"`
+	Attributes     map[string]interface{} `bun:"attributes,type:jsonb"` // explicitly specify JSONB type
+	CreatedBy      string                 `bun:"created_by,notnull"`
+	CreatedAt      time.Time              `bun:"created_at,notnull,default:current_timestamp"`
+	UpdatedAt      time.Time              `bun:"updated_at,notnull,default:current_timestamp"`
 }
 
 type GetJobByIDInput struct {

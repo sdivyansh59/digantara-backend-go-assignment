@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -36,7 +37,13 @@ func newApp(r *chi.Mux, h *huma.API, config *utils.DefaultConfig, c *setup.Contr
 
 // Run starts the application server
 func (a *App) Run() error {
-	// Configure your routes
+	// Start the scheduler
+	ctx := context.Background()
+	if err := a.controllers.Scheduler.Scheduler(ctx); err != nil {
+		log.Fatal().Err(err).Msg("Failed to start scheduler")
+	}
+
+	// Configure routes
 	a.registerRoutes()
 
 	// Start the HTTP server

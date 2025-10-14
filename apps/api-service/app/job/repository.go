@@ -41,15 +41,15 @@ func (r *Repository) Filter(ctx context.Context, option ...query.SearchOption) (
 }
 
 func (r *Repository) Create(ctx context.Context, job *Job) error {
-	job.id = r.snowflakeGenerator.Next()
-	job.createdAt = time.Now()
-	job.updatedAt = time.Now()
+	job.Id = r.snowflakeGenerator.Next()
+	job.CreatedAt = time.Now()
+	job.UpdatedAt = time.Now()
 
 	return r.handler.Create(ctx, job)
 }
 
 func (r *Repository) Update(ctx context.Context, job *Job) error {
-	job.updatedAt = time.Now()
+	job.UpdatedAt = time.Now()
 	return r.handler.Update(ctx, job)
 }
 

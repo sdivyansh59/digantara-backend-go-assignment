@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/job"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/scheduler"
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/shared"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/snowflake"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/utils"
 )
@@ -24,6 +25,12 @@ func ProvideSingletonHuma(router *chi.Mux) *huma.API {
 		humaInstance = utils.ToPointer(api)
 	})
 	return humaInstance
+}
+
+// ProvideWakeupChannel creates a buffered channel for scheduler wakeup events
+func ProvideWakeupChannel() chan *shared.WakeupEvent {
+	// Buffered channel with capacity of 10 to avoid blocking job creation
+	return make(chan *shared.WakeupEvent, 10)
 }
 
 // Controllers holds all application controllers

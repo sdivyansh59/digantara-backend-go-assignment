@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sdivyansh59/digantara-backend-golang-assignment/app/shared"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/snowflake"
 	"github.com/sdivyansh59/digantara-backend-golang-assignment/internal-lib/utils"
 )
@@ -14,15 +15,17 @@ type Controller struct {
 	snowflake  *snowflake.Generator
 	converter  *Converter
 	repository IRepository
+	wakeupChan chan *shared.WakeupEvent
 }
 
 func NewController(logger *utils.WithLogger, snowflake *snowflake.Generator, converter *Converter,
-	repository IRepository) *Controller {
+	repository IRepository, wakeupChan chan *shared.WakeupEvent) *Controller {
 	return &Controller{
 		WithLogger: logger,
 		snowflake:  snowflake,
 		converter:  converter,
 		repository: repository,
+		wakeupChan: wakeupChan,
 	}
 }
 
@@ -86,6 +89,17 @@ func (c *Controller) CreateJob(ctx context.Context, input *CreateJobInput) (*Cre
 	err := c.repository.Create(ctx, entity)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create job: %w", err)
+	}
+
+	// Notify scheduler of new job (non-blocking)
+	select {
+	case c.wakeupChan <- &shared.WakeupEvent{
+		JobID:       entity.Id,
+		ScheduledAt: entity.ScheduledAt,
+	}:
+		c.Logger.Info().Msgf("Notified scheduler of new job %s", entity.Id)
+	default:
+		c.Logger.Warn().Msg("Scheduler wakeup channel is full, skipping notification")
 	}
 
 	return &CreateJobResponse{
