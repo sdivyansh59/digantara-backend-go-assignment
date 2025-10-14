@@ -1,6 +1,7 @@
-# Huma Project Starter
+# Digantara Backend Engineer (Golang) Assignment
 
-A Go-based API service starter kit built with the Huma framework, demonstrating best practices for building and maintaining scalable REST APIs.
+**Note:** _This README.md file will explain the project structure and the tech stack I have used to accomplish this assignment.
+To know assignment-specific details, please check `apps/scheduler-service/README.md` file._
 
 ## 📋 Project Overview
 
@@ -9,24 +10,26 @@ This project provides a foundation for building RESTful APIs with Go. It include
 - A clean architecture design
 - API endpoint examples with request/response validation
 - Database integration using Bun ORM
-- Error handling and logging with Sentry integration
+- Error handling and logging
 - Environment-based configuration
+
+
 
 ## 🏗️ Project Structure
 
 ```
 apps/
-  api-service/           # Main API service
+  scheduler-service/           # Main API service
     app/                 # Application core
-      greeting/          # Greeting module (example)
-      internal-lib/      # Internal libraries
-        snowflake/       # Snowflake ID implementation
-        utils/           # Utility functions
+      scheduler/          # Logic for scheduling the Jobs
       setup/             # App configuration and setup
       shared/            # Shared resources
-      user/              # User module
+      job/               # handling Jobs logic 
     migrations/          # Database migrations
     routes/              # API route definitions
+    internal-lib/      # Internal libraries
+        snowflake/       # Snowflake ID implementation
+        utils/           # Utility functions
     Dockerfile           # Container definition
     example.env          # Environment variable example
     go.mod               # Go module definition
@@ -41,74 +44,11 @@ apps/
 - Snowflake ID generation for distributed systems
 - Environment-based configuration
 - Dependency injection with Wire
-- Error tracking with Sentry
-
-## 🛠️ API Endpoints
-
-The service currently provides the following endpoints:
-
-- `GET /greeting/{name}`: Returns a greeting message for the provided name
-- `POST /reviews`: Endpoint for submitting reviews (rated 1-5)
-
-## 🔧 Getting Started
-
-### Prerequisites
-
-- Go 1.16+
-- PostgreSQL (or compatible database)
-
-### Environment Setup
-
-Copy the example environment file and adjust as needed:
-
-```bash
-cp example.env .env
-```
-
-Required environment variables:
-- `ENVIRONMENT`: Set to `development`, `staging`, or `production`
-- `PORT`: HTTP port to listen on
-- `GRPC_PORT`: gRPC port (if enabled)
-- `API_KEY`: API key for authentication
-- `DEBUG`: Set to `true` for verbose logging
-
-### Running Locally
-
-```bash
-go run main.go
-```
-
-### Building for Production
-
-```bash
-go build -o api-service
-```
-
-## 🐳 Docker Support
-
-This project includes Docker support for containerized deployment.
-
-Build the container:
-```bash
-docker build -t huma-api-service .
-```
-
-Run the container:
-```bash
-docker run -p 8080:8080 --env-file .env huma-api-service
-```
 
 ## 📚 Documentation
 
 API documentation is automatically generated through the Huma framework and available at the `/docs` endpoint when the server is running.
 
-## 🧪 Testing
-
-Run the tests with:
-
-```bash
-go test ./...
-```
 
 ## 📦 Dependencies
 
@@ -118,6 +58,3 @@ go test ./...
 - [Sentry](https://github.com/getsentry/sentry-go): Error tracking
 - [Wire](https://github.com/google/wire): Dependency injection
 
-## 📝 License
-
-[MIT License]
